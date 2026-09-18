@@ -1,7 +1,5 @@
 # Clinical Notes Aggregator System
 
-> **Synchronous High-Volume Concurrent Reads & Writes for Multi-Hospital Healthcare Systems & Clinical EHR Integration with ABDM Consent Governance**
-
 ---
 
 ## 1. Problem Statement: The Multi-Center Oncology Challenge
