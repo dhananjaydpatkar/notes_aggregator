@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Clinical Notes Aggregator — Fast patient note search and retrieval for busy healthcare environments" />
+  <title>Clinical Notes Aggregator</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="style.css?v=abdm5" />
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════ HEADER -->
+  <header id="header">
+    <div class="header-brand">
+      <div>
+        <div class="brand-sub">Clinical Notes Aggregator</div>
+      </div>
+    </div>
+
+    <div class="header-search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="header-search" placeholder="Search by Patient ID or ABHA number…" autocomplete="off"
+        spellcheck="false" />
+      <span class="search-shortcut">/</span>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-icon" id="settings-btn" title="API Settings (⚙)">⚙</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ SETTINGS PANEL -->
+  <div id="settings-panel">
+    <h3>⚙ API Settings</h3>
+
+    <div class="settings-field">
+      <label for="settings-url">API Base URL</label>
+      <input type="url" id="settings-url" placeholder="https://l64zo3f94g.execute-api.ap-south-1.amazonaws.com"
+        autocomplete="off" spellcheck="false" />
+      <div class="settings-help">
+        Default: <code>https://l64zo3f94g.execute-api.ap-south-1.amazonaws.com</code>.<br>
+        For local backend: <code>http://localhost:3000</code>
+      </div>
+    </div>
+
+    <div class="settings-field">
+      <label for="settings-tenant">Default Tenant ID</label>
+      <input type="text" id="settings-tenant" placeholder="HOSP-WEST" autocomplete="off" spellcheck="false" />
+      <div class="settings-help">
+        Set per-request via <code>X-Tenant-Id</code> header or sidebar field.
+      </div>
+    </div>
+
+    <button class="settings-save-btn" id="settings-save-btn">Save Settings</button>
+
+    <div class="settings-info-box">
+      <strong>How to change endpoints</strong><br>
+      Settings are saved for this browser tab session (resets on refresh).<br><br>
+      <strong>Pointing to a deployed AWS endpoint:</strong><br>
+      1. Open AWS Console → API Gateway → your stack<br>
+      2. Copy the <code>Invoke URL</code><br>
+      3. Paste here and save<br><br>
+      <strong>Keyboard shortcuts:</strong> <code>/</code> = search &nbsp;
+      <code>n/↓</code> = next note &nbsp; <code>p/↑</code> = prev note &nbsp;
+      <code>f</code> = filter &nbsp; <code>Esc</code> = close
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ LAYOUT -->
+  <div id="app-layout">
+
+    <!-- ──────────────────────────────────────────────── LEFT SIDEBAR -->
+    <aside id="sidebar">
+
+      <!-- Facility Status -->
+      <div class="sidebar-section facility-banner">
+        <div class="facility-header">
+          <span class="facility-caption">Clinician Facility</span>
+          <span class="facility-badge">Active</span>
+        </div>
+        <div id="current-hospital-display" class="facility-name">TMH-MUMBAI</div>
+        <div class="facility-desc">Tata Memorial Hospital, Mumbai</div>
+      </div>
+
+      <!-- Patient ID Search (Scoped to Current Facility) -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">1. Local Patient ID Lookup</div>
+        <form id="patient-id-form" class="lookup-form" onsubmit="event.preventDefault(); handlePatientIdSearch();">
+          <div class="lookup-input-group">
+            <input type="text" id="sidebar-patient-input" class="lookup-input" placeholder="e.g. PAT-ABDM-001"
+              autocomplete="off" spellcheck="false" />
+            <button type="submit" class="btn-lookup" id="btn-search-patient">Search</button>
+          </div>
+          <div class="lookup-note">Always queries current facility (<span class="curr-tenant-text">TMH-MUMBAI</span>)
+          </div>
+        </form>
+
+        <!-- ABHA ID Search -->
+        <div class="sidebar-label" style="margin-top:14px;">2. ABDM ABHA ID</div>
+        <form id="abha-id-form" class="lookup-form" onsubmit="event.preventDefault(); handleAbhaSearch();">
+          <div class="lookup-input-group">
+            <input type="text" id="sidebar-abha-input" class="lookup-input" placeholder="14-xxxx-xxxx-xxxx"
+              autocomplete="off" spellcheck="false" />
+            <button type="submit" class="btn-lookup" id="btn-search-abha">Lookup</button>
+          </div>
+          <div class="lookup-note">Auto-populated from Patient ID or searched directly</div>
+        </form>
+      </div>
+
+      <!-- Hospital Record Selector & Tenant-Specific Consent -->
+      <div class="sidebar-section" id="tenant-consent-section">
+        <div class="sidebar-label">3. Hospital Record View</div>
+        <div class="tenant-select-wrapper">
+          <select id="tenant-select" class="tenant-dropdown" onchange="handleTenantChange(this.value)">
+            <option value="TMH-MUMBAI">TMH-MUMBAI (Tata Memorial Centre - Local)</option>
+          </select>
+        </div>
+
+        <!-- Tenant Consent Status Card -->
+        <div id="consent-status-card" class="consent-status-card">
+          <div class="consent-status-header">
+            <span class="consent-card-title">ABDM Consent</span>
+            <span id="consent-badge" class="consent-badge-live">LIVE</span>
+          </div>
+          <div class="consent-prop-row">
+            <span class="consent-prop-label">Artefact:</span>
+            <span id="consent-id-val" class="consent-prop-mono">LOCAL-RECORD</span>
+          </div>
+          <div class="consent-prop-row">
+            <span class="consent-prop-label">Validity:</span>
+            <span id="consent-validity-val" class="consent-prop-text">Permanent (Home EHR)</span>
+          </div>
+          <div id="consent-purpose-row" class="consent-prop-row">
+            <span class="consent-prop-label">Purpose:</span>
+            <span id="consent-purpose-val" class="consent-prop-text">CARETREAT (Care & Treatment)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo ABDM Patients -->
+      <div class="sidebar-section">
+        <div class="sidebar-label">Demo Patients · ABDM Cross-Hospital</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+          <button type="button" class="btn-demo-patient" onclick="loadDemoPatient('PAT-ABDM-001')">
+            <div style="font-weight:600;color:var(--text-primary);">Anita Deshmukh (Breast Ca)</div>
+            <div style="font-size:10px;color:var(--text-muted);">TMH (Local) + Apollo (Live) + AIIMS (Expired)</div>
+          </button>
+          <button type="button" class="btn-demo-patient" onclick="loadDemoPatient('PAT-ABDM-002')">
+            <div style="font-weight:600;color:var(--text-primary);">Vikram Malhotra (Lung Ca)</div>
+            <div style="font-size:10px;color:var(--text-muted);">Max Delhi (Local) + Fortis (Live)</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Patient Info Card -->
+      <div class="sidebar-section">
+        <div id="patient-info-card" class="patient-info-card">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Recent Patients (in-memory, session only) -->
+      <div class="sidebar-section"
+        style="border-bottom:none;flex:1;overflow:hidden;display:flex;flex-direction:column;">
+        <div class="sidebar-label">Recent · This Session</div>
+        <div id="recent-list" class="recent-list">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Sidebar Actions -->
+      <div class="sidebar-actions">
+        <button class="evict-btn" id="evict-btn" disabled title="Evict patient from warm index (data stays in S3)">
+          🗑 Evict from Index
+        </button>
+      </div>
+    </aside>
+
+    <!-- ──────────────────────────────────────────────────── MAIN AREA -->
+    <main id="main">
+
+      <!-- Filter Bar -->
+      <div id="filter-bar">
+        <div class="filter-chips">
+          <button class="chip active" data-type="ALL">All</button>
+          <button class="chip" data-type="ONCOLOGY">🔴 Oncology</button>
+          <button class="chip" data-type="LAB">🔵 Lab / Path</button>
+          <button class="chip" data-type="RADIOLOGY">🟡 Radiology</button>
+          <button class="chip" data-type="SURGERY">🟣 Surgery / OT</button>
+          <button class="chip" data-type="DISCHARGE">🟢 Discharge</button>
+          <button class="chip" data-type="TREATMENT">🔷 Treatment</button>
+        </div>
+        <div class="filter-sep"></div>
+        <input type="text" id="filter-text-search" class="filter-text-search" placeholder="Filter by keyword… (f)" />
+        <div class="filter-stats" id="filter-stats">—</div>
+      </div>
+
+      <!-- Notification Banner for Expired Consents when viewing ALL -->
+      <div id="all-tenants-warning-banner" class="tenant-warning-banner hidden">
+        <div class="warning-banner-icon">⚠️</div>
+        <div class="warning-banner-body">
+          <strong id="warning-banner-title">ABDM Notice: Certain Hospital Records Excluded Due to Expired
+            Consent</strong>
+          <p id="all-tenants-warning-text"></p>
+        </div>
+      </div>
+
+      <!-- Expired Consent Prohibited Card (replaces timeline when single expired tenant is selected) -->
+      <div id="expired-tenant-blocked-view" class="expired-tenant-blocked hidden">
+        <div class="blocked-icon">⛔</div>
+        <h3 id="blocked-title">Access Restricted: ABDM Consent Expired</h3>
+        <p id="blocked-desc"></p>
+        <div class="blocked-details">
+          <div class="blocked-detail-row"><strong>Hospital:</strong> <span id="blocked-hospital-name"></span></div>
+          <div class="blocked-detail-row"><strong>Consent Artefact:</strong> <code id="blocked-artefact-id"></code>
+          </div>
+          <div class="blocked-detail-row"><strong>Status:</strong> <span class="badge-expired">EXPIRED</span></div>
+          <div class="blocked-detail-row"><strong>Expired At:</strong> <span id="blocked-expiry-date"></span></div>
+          <div class="blocked-detail-row" style="margin-top:6px;font-size:11px;color:var(--text-muted);">
+            <strong>ABDM Policy Compliance:</strong> Health Information User (HIU) is prohibited from querying clinical
+            records past consent validity.
+          </div>
+        </div>
+        <button type="button" class="btn-renew-consent" onclick="simulateConsentRenewal()">
+          🔄 Request Consent Renewal via ABDM PHR
+        </button>
+      </div>
+
+      <!-- Notes Timeline -->
+      <div id="notes-timeline">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination-bar">
+        <button class="page-btn" id="prev-page-btn" disabled>← Prev</button>
+        <div class="page-info" id="page-info">—</div>
+        <button class="page-btn" id="next-page-btn" disabled>Next →</button>
+      </div>
+
+    </main>
+
+    <!-- ──────────────────────────────────────────────── DETAIL PANEL -->
+    <aside id="detail-panel">
+      <div class="detail-header">
+        <span class="detail-type-badge badge-generic" id="detail-type-badge">NOTE</span>
+        <button class="detail-close-btn" id="detail-close-btn" title="Close (Esc)">✕</button>
+      </div>
+      <div class="detail-meta" id="detail-meta">
+        <!-- Filled by JS -->
+      </div>
+      <div class="detail-body" id="detail-body">
+        <!-- Filled by JS -->
+      </div>
+    </aside>
+
+  </div><!-- /app-layout -->
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="app.js?v=abdm5"></script>
+</body>
+
+</html>

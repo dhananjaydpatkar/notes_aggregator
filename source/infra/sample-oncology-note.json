@@ -1,0 +1,40 @@
+{
+  "tenantId": "HOSP-WEST",
+  "sourceSystem": "MOIS",
+  "facilityId": "HOSP-WEST-01",
+  "patientId": "PAT-9082341",
+  "encounterId": "ENC-45129",
+  "noteType": "MEDICAL_ONCOLOGY_PROGRESS",
+  "author": {
+    "clinicianId": "DOC-7712",
+    "name": "Dr. Sarah Jenkins, MD",
+    "department": "Medical Oncology"
+  },
+  "demographics": {
+    "age": 58,
+    "gender": "F",
+    "abhaId": "14-9876-5432-1098",
+    "aadhaarLast4": "4321",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "pincode": "400012"
+  },
+  "timestamps": {
+    "authoredAt": "2026-08-18T10:30:00Z",
+    "recordedAt": "2026-08-18T10:32:15Z"
+  },
+  "content": {
+    "format": "application/json",
+    "title": "Cycle 3 Chemotherapy Review",
+    "sections": {
+      "chiefComplaint": "Patient presents for Cycle 3 FOLFOX evaluation. Reports mild peripheral neuropathy in fingertips.",
+      "assessment": "Stage III Colorectal Adenocarcinoma (cT3N1M0), tolerating oxaliplatin regimen reasonably well.",
+      "plan": "Continue FOLFOX Cycle 3 at 100% dose. Prescribe Gabapentin 300mg TID for neuropathy. Contact family at +91 9820123456."
+    },
+    "rawText": "Cycle 3 Chemotherapy Review. Patient: Priya Sharma, DOB: 14/05/1968. Assessment: Stage III Colorectal Adenocarcinoma. Contact: +91 9820123456."
+  },
+  "coding": [
+    { "system": "ICD-10", "code": "C18.9", "display": "Malignant neoplasm of colon, unspecified" },
+    { "system": "SNOMED-CT", "code": "372087000", "display": "Primary malignant neoplasm of colon" }
+  ]
+}

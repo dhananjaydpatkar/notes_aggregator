@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-FRT-RAD-004",
+  "tenantId": "FORTIS-NCR",
+  "patientId": "PAT-ABDM-002",
+  "encounterId": "ENC--RAD-004",
+  "sourceSystem": "FORTIS-PACS",
+  "facilityId": "FAC-FRT-CT1",
+  "noteType": "RADIOLOGY_REPORT",
+  "author": {
+    "clinicianId": "DOC-FRT-7502",
+    "name": "Dr. Neha Agnihotri, DMRD",
+    "department": "Radiodiagnosis"
+  },
+  "demographics": {
+    "age": 64,
+    "gender": "M",
+    "abhaId": "14-1234-5678-9012",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-08-15T14:30:00Z",
+    "recordedAt": "2026-08-15T14:30:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Surveillance Contrast-Enhanced Chest CT",
+    "rawText": "CT Chest: Status post right upper lobectomy. Clean bronchial stump. No evidence of recurrent local soft tissue mass or mediastinal lymphadenopathy. Clear left lung parenchyma. Stable post-surgical appearance.",
+    "sections": {
+      "clinicalSummary": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT.",
+      "impression": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT."
+    }
+  },
+  "summary": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT."
+}

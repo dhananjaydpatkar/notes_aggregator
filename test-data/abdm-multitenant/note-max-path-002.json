@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-MAX-PATH-002",
+  "tenantId": "MAX-DELHI",
+  "patientId": "PAT-ABDM-002",
+  "encounterId": "ENC-PATH-002",
+  "sourceSystem": "MAX-LIS",
+  "facilityId": "FAC-MAX-GENOMICS",
+  "noteType": "PATHOLOGY_REPORT",
+  "author": {
+    "clinicianId": "DOC-MAX-7408",
+    "name": "Dr. Priya Bansal, MD",
+    "department": "Molecular Pathology"
+  },
+  "demographics": {
+    "age": 64,
+    "gender": "M",
+    "abhaId": "14-1234-5678-9012",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-04-12T16:00:00Z",
+    "recordedAt": "2026-04-12T16:00:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Molecular & Genomic Pathology: Lung Adenocarcinoma",
+    "rawText": "Invasive adenocarcinoma of right upper lobe, acinar predominant. Stage: pT2a N0 M0 (Stage IB). Molecular NGS Panel: EGFR Exon 21 L858R mutation DETECTED. ALK and ROS1 negative. PD-L1 TPS: 15%. Targetable EGFR mutation present.",
+    "sections": {
+      "clinicalSummary": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected.",
+      "impression": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected."
+    }
+  },
+  "summary": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected."
+}

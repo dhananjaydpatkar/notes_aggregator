@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-AIM-RAD-005",
+  "tenantId": "AIIMS-DEL",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC--RAD-005",
+  "sourceSystem": "AIIMS-RADNET",
+  "facilityId": "FAC-AIM-LINAC2",
+  "noteType": "RADIATION_ONCOLOGY_NOTE",
+  "author": {
+    "clinicianId": "DOC-AIM-7301",
+    "name": "Dr. Sanjay Bhatt, MD, DNB",
+    "department": "Radiation Oncology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-08-04T15:20:00Z",
+    "recordedAt": "2026-08-04T15:20:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Adjuvant Radiotherapy Completion: 3D-CRT Chest Wall + SCF",
+    "rawText": "Patient completed 40 Gy in 15 fractions external beam radiotherapy to the right chest wall and supraclavicular fossa using 6 MV photons. Acute skin reaction: RTOG Grade 1 erythema. Recommended topical moisturizers. Heart and contralateral breast doses well within constraints.",
+    "sections": {
+      "clinicalSummary": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis.",
+      "impression": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis."
+    }
+  },
+  "summary": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis."
+}

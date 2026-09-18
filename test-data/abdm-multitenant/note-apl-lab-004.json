@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-APL-LAB-004",
+  "tenantId": "APOLLO-BLR",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC--LAB-004",
+  "sourceSystem": "APOLLO-LIS",
+  "facilityId": "FAC-APL-LAB",
+  "noteType": "LAB_REPORT",
+  "author": {
+    "clinicianId": "DOC-APL-7402",
+    "name": "Dr. Arvind Swaminathan, MD",
+    "department": "Clinical Pathology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "Bengaluru"
+  },
+  "timestamps": {
+    "authoredAt": "2026-05-09T08:45:00Z",
+    "recordedAt": "2026-05-09T08:45:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Routine Pre-Chemo Complete Blood Count & Renal Panel",
+    "rawText": "Hb: 11.4 g/dL, WBC: 4,800/uL, Absolute Neutrophil Count (ANC): 2,450/uL, Platelets: 185,000/uL. Serum Creatinine: 0.82 mg/dL, SGOT: 28 U/L, SGPT: 31 U/L. Bone marrow and organ functions adequate for systemic cytotoxic therapy.",
+    "sections": {
+      "clinicalSummary": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion.",
+      "impression": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion."
+    }
+  },
+  "summary": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion."
+}

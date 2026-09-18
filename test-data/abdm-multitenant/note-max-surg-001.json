@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-MAX-SURG-001",
+  "tenantId": "MAX-DELHI",
+  "patientId": "PAT-ABDM-002",
+  "encounterId": "ENC-SURG-001",
+  "sourceSystem": "MAX-HIS",
+  "facilityId": "FAC-MAX-OT3",
+  "noteType": "OPERATIVE_NOTE",
+  "author": {
+    "clinicianId": "DOC-MAX-7105",
+    "name": "Dr. Rajeshwar Sharma, MCh",
+    "department": "Thoracic Surgical Oncology"
+  },
+  "demographics": {
+    "age": 64,
+    "gender": "M",
+    "abhaId": "14-1234-5678-9012",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-04-05T08:00:00Z",
+    "recordedAt": "2026-04-05T08:00:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Video-Assisted Thoracoscopic (VATS) Right Upper Lobectomy",
+    "rawText": "Patient Vikram Malhotra (ABHA: 14-1234-5678-9012) underwent uneventful VATS right upper lobectomy and radical systemic mediastinal lymphadenectomy (stations 2R, 4R, 7, 10R). Chest tube placed on -20 cmH2O suction.",
+    "sections": {
+      "clinicalSummary": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure.",
+      "impression": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure."
+    }
+  },
+  "summary": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure."
+}

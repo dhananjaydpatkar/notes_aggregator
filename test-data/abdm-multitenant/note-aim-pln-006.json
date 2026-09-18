@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-AIM-PLN-006",
+  "tenantId": "AIIMS-DEL",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC--PLN-006",
+  "sourceSystem": "AIIMS-EHR-V3",
+  "facilityId": "FAC-AIM-OPD",
+  "noteType": "TREATMENT_PLAN",
+  "author": {
+    "clinicianId": "DOC-AIM-7202",
+    "name": "Dr. Rajiv Singhania, MD, ECMO",
+    "department": "Medical Oncology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-08-20T10:30:00Z",
+    "recordedAt": "2026-08-20T10:30:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Comprehensive Oncology Survivorship & Endocrine Therapy Plan",
+    "rawText": "Multimodal management concluded (Surgery at TMH, Chemotherapy at Apollo, Radiotherapy at AIIMS). Patient is in complete clinical and radiological remission. Initiating adjuvant endocrine therapy: Tab Tamoxifen 20 mg once daily for 5-10 years with annual gynecological evaluation. Routine surveillance every 3 months.",
+    "sections": {
+      "clinicalSummary": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily.",
+      "impression": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily."
+    }
+  },
+  "summary": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily."
+}

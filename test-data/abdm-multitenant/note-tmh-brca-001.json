@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-TMH-BRCA-001",
+  "tenantId": "TMH-MUMBAI",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC-BRCA-001",
+  "sourceSystem": "TMH-EHR-V2",
+  "facilityId": "FAC-TMH-MAIN-OT",
+  "noteType": "OPERATIVE_NOTE",
+  "author": {
+    "clinicianId": "DOC-TMH-7101",
+    "name": "Dr. Sunil Deshmukh, MS, MCh",
+    "department": "Surgical Oncology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "Mumbai"
+  },
+  "timestamps": {
+    "authoredAt": "2026-03-12T09:30:00Z",
+    "recordedAt": "2026-03-12T09:30:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Right Modified Radical Mastectomy & Axillary Dissection",
+    "rawText": "Patient Anita Deshmukh (ABHA: 14-8765-4321-9876) underwent right modified radical mastectomy under GA. Level I and II axillary lymph nodes cleared. Hemostasis secured. Two closed suction drains placed. Patient transferred to PACU stable.",
+    "sections": {
+      "clinicalSummary": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear.",
+      "impression": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear."
+    }
+  },
+  "summary": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear."
+}

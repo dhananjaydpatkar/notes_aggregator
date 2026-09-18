@@ -1,0 +1,234 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Notes Aggregator — Serverless Clinical Notes Ingestion, PHI Masking & Patient Retrieval
+
+Globals:
+  Function:
+    Runtime: java21
+    Architectures:
+      - arm64
+    MemorySize: 1024
+    Timeout: 15
+    Tracing: Active
+    Environment:
+      Variables:
+        JAVA_TOOL_OPTIONS: "-XX:+UseG1GC -XX:+UseStringDeduplication"
+        AWS_REGION_NAME: !Ref "AWS::Region"
+        S3_BUCKET_NAME: !Ref ClinicalNotesBucket
+        S3_ENDPOINT: ""
+        DYNAMODB_TABLE_NAME: !Ref IdempotencyTable
+        DYNAMODB_ENDPOINT: ""
+        OPENSEARCH_ENDPOINT: !Ref OpenSearchEndpointParam
+        OPENSEARCH_INDEX: "clinical-notes-v1"
+
+Parameters:
+  OpenSearchEndpointParam:
+    Type: String
+    Default: "http://localhost:9200"
+    Description: "Endpoint URL for OpenSearch (e.g. EC2 instance or OpenSearch Serverless collection)"
+
+Resources:
+  # =========================================================================
+  # HTTP API (Open Reference Implementation — No Authcn / Authzn)
+  # =========================================================================
+  ClinicalNotesApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - POST
+          - DELETE
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - X-Tenant-Id
+          - Idempotency-Key
+          - X-Consent-Artefact-Id
+        AllowOrigins:
+          - "*"
+
+  # =========================================================================
+  # LAMBDA FUNCTION: Ingestion Handler (POST /api/v1/notes)
+  # =========================================================================
+  NotesIngestionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: notes-ingestion-handler
+      Handler: org.ncg.notes.ingestion.NotesIngestionHandler::handleRequest
+      CodeUri: ../notes-ingestion-handler/target/notes-ingestion-handler-1.0.0-SNAPSHOT.jar
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+              Resource: !Sub "${ClinicalNotesBucket.Arn}/*"
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: !GetAtt IdempotencyTable.Arn
+      Events:
+        IngestNotes:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /api/v1/notes
+            Method: POST
+
+  # =========================================================================
+  # LAMBDA FUNCTION: Query Handler (GET /api/v1/patients/{patientId}/notes)
+  # =========================================================================
+  NotesQueryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: notes-query-handler
+      Handler: org.ncg.notes.query.NotesQueryHandler::handleRequest
+      CodeUri: ../notes-query-handler/target/notes-query-handler-1.0.0-SNAPSHOT.jar
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:ListBucket
+              Resource:
+                - !GetAtt ClinicalNotesBucket.Arn
+                - !Sub "${ClinicalNotesBucket.Arn}/*"
+      Events:
+        QueryPatientNotes:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /api/v1/patients/{patientId}/notes
+            Method: GET
+
+  # =========================================================================
+  # LAMBDA FUNCTION: Index Handler (DELETE /api/v1/patients/{patientId}/index)
+  # =========================================================================
+  NotesIndexFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: notes-index-handler
+      Handler: org.ncg.notes.index.NotesIndexEvictionHandler::handleRequest
+      CodeUri: ../notes-index-handler/target/notes-index-handler-1.0.0-SNAPSHOT.jar
+      MemorySize: 512
+      Events:
+        EvictPatientIndex:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /api/v1/patients/{patientId}/index
+            Method: DELETE
+
+  # =========================================================================
+  # LAMBDA FUNCTION: FHIR R4 Handler (/fhir/r4/*)
+  # =========================================================================
+  NotesFhirFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: notes-fhir-handler
+      Handler: org.ncg.notes.fhir.NotesFhirHandler::handleRequest
+      CodeUri: ../notes-fhir-handler/target/notes-fhir-handler-1.0.0-SNAPSHOT.jar
+      MemorySize: 1024
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:ListBucket
+              Resource:
+                - !GetAtt ClinicalNotesBucket.Arn
+                - !Sub "${ClinicalNotesBucket.Arn}/*"
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource: !GetAtt IdempotencyTable.Arn
+      Events:
+        FhirMetadata:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /fhir/r4/metadata
+            Method: GET
+        FhirDocRefSearch:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /fhir/r4/DocumentReference
+            Method: GET
+        FhirDocRefCreate:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /fhir/r4/DocumentReference
+            Method: POST
+        FhirDocRefRead:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /fhir/r4/DocumentReference/{noteId}
+            Method: GET
+        FhirPatientEverything:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ClinicalNotesApi
+            Path: /fhir/r4/Patient/{patientId}/$everything
+            Method: GET
+
+  # =========================================================================
+  # DURABLE STORAGE: S3 Bucket
+  # =========================================================================
+  ClinicalNotesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "clinical-notes-${AWS::AccountId}-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # =========================================================================
+  # IDEMPOTENCY STORE: DynamoDB Table
+  # =========================================================================
+  IdempotencyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: notes-idempotency
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expiresAt
+        Enabled: true
+
+Outputs:
+  ApiEndpoint:
+    Description: "Base URL for Clinical Notes HTTP API"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com"
+  IngestUrl:
+    Description: "POST Ingestion endpoint"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com/api/v1/notes"
+  QueryUrl:
+    Description: "GET Patient notes query endpoint"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com/api/v1/patients/{patientId}/notes"
+  EvictUrl:
+    Description: "DELETE Patient index eviction endpoint"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com/api/v1/patients/{patientId}/index"
+  FhirCapabilityUrl:
+    Description: "FHIR R4 CapabilityStatement"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com/fhir/r4/metadata"
+  FhirDocRefUrl:
+    Description: "FHIR R4 DocumentReference search"
+    Value: !Sub "https://${ClinicalNotesApi}.execute-api.${AWS::Region}.amazonaws.com/fhir/r4/DocumentReference"

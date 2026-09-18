@@ -1,0 +1,138 @@
+[
+  {
+    "noteId": "NOTE-MAX-SURG-001",
+    "tenantId": "MAX-DELHI",
+    "patientId": "PAT-ABDM-002",
+    "encounterId": "ENC-SURG-001",
+    "sourceSystem": "MAX-HIS",
+    "facilityId": "FAC-MAX-OT3",
+    "noteType": "OPERATIVE_NOTE",
+    "author": {
+      "clinicianId": "DOC-MAX-7105",
+      "name": "Dr. Rajeshwar Sharma, MCh",
+      "department": "Thoracic Surgical Oncology"
+    },
+    "demographics": {
+      "age": 64,
+      "gender": "M",
+      "abhaId": "14-1234-5678-9012",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-04-05T08:00:00Z",
+      "recordedAt": "2026-04-05T08:00:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Video-Assisted Thoracoscopic (VATS) Right Upper Lobectomy",
+      "rawText": "Patient Vikram Malhotra (ABHA: 14-1234-5678-9012) underwent uneventful VATS right upper lobectomy and radical systemic mediastinal lymphadenectomy (stations 2R, 4R, 7, 10R). Chest tube placed on -20 cmH2O suction.",
+      "sections": {
+        "clinicalSummary": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure.",
+        "impression": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure."
+      }
+    },
+    "summary": "VATS Right Upper Lobectomy + Mediastinal Node Dissection. Uneventful procedure."
+  },
+  {
+    "noteId": "NOTE-MAX-PATH-002",
+    "tenantId": "MAX-DELHI",
+    "patientId": "PAT-ABDM-002",
+    "encounterId": "ENC-PATH-002",
+    "sourceSystem": "MAX-LIS",
+    "facilityId": "FAC-MAX-GENOMICS",
+    "noteType": "PATHOLOGY_REPORT",
+    "author": {
+      "clinicianId": "DOC-MAX-7408",
+      "name": "Dr. Priya Bansal, MD",
+      "department": "Molecular Pathology"
+    },
+    "demographics": {
+      "age": 64,
+      "gender": "M",
+      "abhaId": "14-1234-5678-9012",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-04-12T16:00:00Z",
+      "recordedAt": "2026-04-12T16:00:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Molecular & Genomic Pathology: Lung Adenocarcinoma",
+      "rawText": "Invasive adenocarcinoma of right upper lobe, acinar predominant. Stage: pT2a N0 M0 (Stage IB). Molecular NGS Panel: EGFR Exon 21 L858R mutation DETECTED. ALK and ROS1 negative. PD-L1 TPS: 15%. Targetable EGFR mutation present.",
+      "sections": {
+        "clinicalSummary": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected.",
+        "impression": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected."
+      }
+    },
+    "summary": "Lung Adenocarcinoma pT2aN0M0 with EGFR L858R sensitizing mutation detected."
+  },
+  {
+    "noteId": "NOTE-FRT-ONC-003",
+    "tenantId": "FORTIS-NCR",
+    "patientId": "PAT-ABDM-002",
+    "encounterId": "ENC--ONC-003",
+    "sourceSystem": "FORTIS-CARE",
+    "facilityId": "FAC-FRT-OPD",
+    "noteType": "MEDICAL_ONCOLOGY_PROGRESS",
+    "author": {
+      "clinicianId": "DOC-FRT-7204",
+      "name": "Dr. Vinay Goel, DM",
+      "department": "Medical Oncology"
+    },
+    "demographics": {
+      "age": 64,
+      "gender": "M",
+      "abhaId": "14-1234-5678-9012",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-05-02T11:30:00Z",
+      "recordedAt": "2026-05-02T11:30:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Adjuvant Targeted Therapy: Osimertinib Initiation",
+      "rawText": "Review of VATS resection and molecular report from Max Delhi confirming EGFR L858R mutation. Discussed ADAURA trial data. Initiated adjuvant Osimertinib 80 mg orally once daily. Baseline ECG QTc normal (410 ms). Advised regarding rash, diarrhea, and paronychia management.",
+      "sections": {
+        "clinicalSummary": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R.",
+        "impression": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R."
+      }
+    },
+    "summary": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R."
+  },
+  {
+    "noteId": "NOTE-FRT-RAD-004",
+    "tenantId": "FORTIS-NCR",
+    "patientId": "PAT-ABDM-002",
+    "encounterId": "ENC--RAD-004",
+    "sourceSystem": "FORTIS-PACS",
+    "facilityId": "FAC-FRT-CT1",
+    "noteType": "RADIOLOGY_REPORT",
+    "author": {
+      "clinicianId": "DOC-FRT-7502",
+      "name": "Dr. Neha Agnihotri, DMRD",
+      "department": "Radiodiagnosis"
+    },
+    "demographics": {
+      "age": 64,
+      "gender": "M",
+      "abhaId": "14-1234-5678-9012",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-08-15T14:30:00Z",
+      "recordedAt": "2026-08-15T14:30:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Surveillance Contrast-Enhanced Chest CT",
+      "rawText": "CT Chest: Status post right upper lobectomy. Clean bronchial stump. No evidence of recurrent local soft tissue mass or mediastinal lymphadenopathy. Clear left lung parenchyma. Stable post-surgical appearance.",
+      "sections": {
+        "clinicalSummary": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT.",
+        "impression": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT."
+      }
+    },
+    "summary": "No evidence of local recurrence or distant pulmonary metastasis on post-op CT."
+  }
+]

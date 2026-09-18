@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-FRT-ONC-003",
+  "tenantId": "FORTIS-NCR",
+  "patientId": "PAT-ABDM-002",
+  "encounterId": "ENC--ONC-003",
+  "sourceSystem": "FORTIS-CARE",
+  "facilityId": "FAC-FRT-OPD",
+  "noteType": "MEDICAL_ONCOLOGY_PROGRESS",
+  "author": {
+    "clinicianId": "DOC-FRT-7204",
+    "name": "Dr. Vinay Goel, DM",
+    "department": "Medical Oncology"
+  },
+  "demographics": {
+    "age": 64,
+    "gender": "M",
+    "abhaId": "14-1234-5678-9012",
+    "city": "New Delhi"
+  },
+  "timestamps": {
+    "authoredAt": "2026-05-02T11:30:00Z",
+    "recordedAt": "2026-05-02T11:30:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Adjuvant Targeted Therapy: Osimertinib Initiation",
+    "rawText": "Review of VATS resection and molecular report from Max Delhi confirming EGFR L858R mutation. Discussed ADAURA trial data. Initiated adjuvant Osimertinib 80 mg orally once daily. Baseline ECG QTc normal (410 ms). Advised regarding rash, diarrhea, and paronychia management.",
+    "sections": {
+      "clinicalSummary": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R.",
+      "impression": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R."
+    }
+  },
+  "summary": "Commenced Adjuvant Osimertinib 80mg OD based on Max Delhi pathology EGFR L858R."
+}

@@ -1,0 +1,13 @@
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/NotesFhirHandler.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/mapper/NoteToFhirMapper.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirAttachment.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirBundle.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirCapabilityStatement.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirCodeableConcept.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirCoding.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirContent.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirDocumentReference.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirExtension.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirIdentifier.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirOperationOutcome.java
+/Users/dhananjaypatkar/work/ncg/source/notes_aggregator/source/notes-fhir-handler/src/main/java/org/ncg/notes/fhir/model/FhirReference.java

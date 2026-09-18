@@ -1,0 +1,49 @@
+{
+  "consentId": "CONSENT-ABDM-9901-TATA-APOLLO",
+  "status": "GRANTED",
+  "patient": {
+    "id": "PAT-ABDM-001",
+    "abhaId": "14-8765-4321-9876",
+    "name": "Anita Deshmukh"
+  },
+  "purpose": {
+    "code": "CARETREAT",
+    "text": "Care and Treatment"
+  },
+  "hiTypes": [
+    "DischargeSummary",
+    "DiagnosticReport",
+    "OPConsultation"
+  ],
+  "permission": {
+    "accessMode": "VIEW",
+    "dateRange": {
+      "from": "2026-01-01T00:00:00Z",
+      "to": "2026-12-31T23:59:59Z"
+    },
+    "dataEraseAt": "2027-01-01T00:00:00Z",
+    "frequency": {
+      "unit": "HOUR",
+      "value": 1,
+      "repeats": 0
+    }
+  },
+  "consentManager": {
+    "id": "sbx-cm-01",
+    "name": "ABDM Ayushman Bharat Digital Mission"
+  },
+  "hospitalsIncluded": [
+    {
+      "tenantId": "TMH-MUMBAI",
+      "name": "Tata Memorial Hospital, Mumbai"
+    },
+    {
+      "tenantId": "APOLLO-BLR",
+      "name": "Apollo Hospitals, Bengaluru"
+    },
+    {
+      "tenantId": "AIIMS-DEL",
+      "name": "AIIMS, New Delhi"
+    }
+  ]
+}

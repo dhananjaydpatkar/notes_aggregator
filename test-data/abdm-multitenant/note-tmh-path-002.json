@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-TMH-PATH-002",
+  "tenantId": "TMH-MUMBAI",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC-PATH-002",
+  "sourceSystem": "TMH-LIS",
+  "facilityId": "FAC-TMH-PATH",
+  "noteType": "PATHOLOGY_REPORT",
+  "author": {
+    "clinicianId": "DOC-TMH-7401",
+    "name": "Dr. Meenakshi Sundaram, MD",
+    "department": "Oncopathology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "Mumbai"
+  },
+  "timestamps": {
+    "authoredAt": "2026-03-18T14:15:00Z",
+    "recordedAt": "2026-03-18T14:15:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Histopathology: Right Breast & Axillary Contents",
+    "rawText": "Specimen: Right mastectomy specimen. Tumor size: 2.8 x 2.2 cm. Histology: Invasive Ductal Carcinoma, Nottingham Grade 2. Resection margins: All margins negative (>5mm). Axillary nodes: 1/14 positive for metastasis. IHC: ER positive (80%), PR positive (65%), HER2/neu: Negative (1+). Ki-67: 22%. Pathologic Stage: pT2 N1a M0.",
+    "sections": {
+      "clinicalSummary": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved.",
+      "impression": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved."
+    }
+  },
+  "summary": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved."
+}

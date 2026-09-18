@@ -1,0 +1,206 @@
+[
+  {
+    "noteId": "NOTE-TMH-BRCA-001",
+    "tenantId": "TMH-MUMBAI",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC-BRCA-001",
+    "sourceSystem": "TMH-EHR-V2",
+    "facilityId": "FAC-TMH-MAIN-OT",
+    "noteType": "OPERATIVE_NOTE",
+    "author": {
+      "clinicianId": "DOC-TMH-7101",
+      "name": "Dr. Sunil Deshmukh, MS, MCh",
+      "department": "Surgical Oncology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "Mumbai"
+    },
+    "timestamps": {
+      "authoredAt": "2026-03-12T09:30:00Z",
+      "recordedAt": "2026-03-12T09:30:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Right Modified Radical Mastectomy & Axillary Dissection",
+      "rawText": "Patient Anita Deshmukh (ABHA: 14-8765-4321-9876) underwent right modified radical mastectomy under GA. Level I and II axillary lymph nodes cleared. Hemostasis secured. Two closed suction drains placed. Patient transferred to PACU stable.",
+      "sections": {
+        "clinicalSummary": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear.",
+        "impression": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear."
+      }
+    },
+    "summary": "Right Modified Radical Mastectomy + Axillary Clearance. Uneventful procedure, margins gross clear."
+  },
+  {
+    "noteId": "NOTE-TMH-PATH-002",
+    "tenantId": "TMH-MUMBAI",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC-PATH-002",
+    "sourceSystem": "TMH-LIS",
+    "facilityId": "FAC-TMH-PATH",
+    "noteType": "PATHOLOGY_REPORT",
+    "author": {
+      "clinicianId": "DOC-TMH-7401",
+      "name": "Dr. Meenakshi Sundaram, MD",
+      "department": "Oncopathology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "Mumbai"
+    },
+    "timestamps": {
+      "authoredAt": "2026-03-18T14:15:00Z",
+      "recordedAt": "2026-03-18T14:15:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Histopathology: Right Breast & Axillary Contents",
+      "rawText": "Specimen: Right mastectomy specimen. Tumor size: 2.8 x 2.2 cm. Histology: Invasive Ductal Carcinoma, Nottingham Grade 2. Resection margins: All margins negative (>5mm). Axillary nodes: 1/14 positive for metastasis. IHC: ER positive (80%), PR positive (65%), HER2/neu: Negative (1+). Ki-67: 22%. Pathologic Stage: pT2 N1a M0.",
+      "sections": {
+        "clinicalSummary": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved.",
+        "impression": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved."
+      }
+    },
+    "summary": "Invasive Ductal Carcinoma Grade 2 (pT2N1aM0). ER+/PR+, HER2 negative. 1/14 nodes involved."
+  },
+  {
+    "noteId": "NOTE-APL-CHM-003",
+    "tenantId": "APOLLO-BLR",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC--CHM-003",
+    "sourceSystem": "APOLLO-MEDSYS",
+    "facilityId": "FAC-APL-DAYCARE",
+    "noteType": "MEDICAL_ONCOLOGY_PROGRESS",
+    "author": {
+      "clinicianId": "DOC-APL-7201",
+      "name": "Dr. Sarah Jenkins, MD, DM",
+      "department": "Medical Oncology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "Bengaluru"
+    },
+    "timestamps": {
+      "authoredAt": "2026-05-10T11:00:00Z",
+      "recordedAt": "2026-05-10T11:00:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Adjuvant Chemotherapy: AC-T Regimen Cycle 3",
+      "rawText": "Patient presented for Cycle 3 of AC chemotherapy (Doxorubicin 60 mg/m2 + Cyclophosphamide 600 mg/m2). Performance status ECOG 1. Mild nausea controlled with Aprepitant. No mucositis, neuropathy, or chest discomfort. Chemotherapy infused without acute hypersensitivity.",
+      "sections": {
+        "clinicalSummary": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1.",
+        "impression": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1."
+      }
+    },
+    "summary": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1."
+  },
+  {
+    "noteId": "NOTE-APL-LAB-004",
+    "tenantId": "APOLLO-BLR",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC--LAB-004",
+    "sourceSystem": "APOLLO-LIS",
+    "facilityId": "FAC-APL-LAB",
+    "noteType": "LAB_REPORT",
+    "author": {
+      "clinicianId": "DOC-APL-7402",
+      "name": "Dr. Arvind Swaminathan, MD",
+      "department": "Clinical Pathology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "Bengaluru"
+    },
+    "timestamps": {
+      "authoredAt": "2026-05-09T08:45:00Z",
+      "recordedAt": "2026-05-09T08:45:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Routine Pre-Chemo Complete Blood Count & Renal Panel",
+      "rawText": "Hb: 11.4 g/dL, WBC: 4,800/uL, Absolute Neutrophil Count (ANC): 2,450/uL, Platelets: 185,000/uL. Serum Creatinine: 0.82 mg/dL, SGOT: 28 U/L, SGPT: 31 U/L. Bone marrow and organ functions adequate for systemic cytotoxic therapy.",
+      "sections": {
+        "clinicalSummary": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion.",
+        "impression": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion."
+      }
+    },
+    "summary": "Hematology & Biochemistry satisfactory. ANC 2,450/uL, cleared for cytotoxic infusion."
+  },
+  {
+    "noteId": "NOTE-AIM-RAD-005",
+    "tenantId": "AIIMS-DEL",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC--RAD-005",
+    "sourceSystem": "AIIMS-RADNET",
+    "facilityId": "FAC-AIM-LINAC2",
+    "noteType": "RADIATION_ONCOLOGY_NOTE",
+    "author": {
+      "clinicianId": "DOC-AIM-7301",
+      "name": "Dr. Sanjay Bhatt, MD, DNB",
+      "department": "Radiation Oncology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-08-04T15:20:00Z",
+      "recordedAt": "2026-08-04T15:20:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Adjuvant Radiotherapy Completion: 3D-CRT Chest Wall + SCF",
+      "rawText": "Patient completed 40 Gy in 15 fractions external beam radiotherapy to the right chest wall and supraclavicular fossa using 6 MV photons. Acute skin reaction: RTOG Grade 1 erythema. Recommended topical moisturizers. Heart and contralateral breast doses well within constraints.",
+      "sections": {
+        "clinicalSummary": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis.",
+        "impression": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis."
+      }
+    },
+    "summary": "Completed 40 Gy/15# adjuvant EBRT to chest wall & SCF. Grade 1 skin reaction, no pneumonitis."
+  },
+  {
+    "noteId": "NOTE-AIM-PLN-006",
+    "tenantId": "AIIMS-DEL",
+    "patientId": "PAT-ABDM-001",
+    "encounterId": "ENC--PLN-006",
+    "sourceSystem": "AIIMS-EHR-V3",
+    "facilityId": "FAC-AIM-OPD",
+    "noteType": "TREATMENT_PLAN",
+    "author": {
+      "clinicianId": "DOC-AIM-7202",
+      "name": "Dr. Rajiv Singhania, MD, ECMO",
+      "department": "Medical Oncology"
+    },
+    "demographics": {
+      "age": 52,
+      "gender": "F",
+      "abhaId": "14-8765-4321-9876",
+      "city": "New Delhi"
+    },
+    "timestamps": {
+      "authoredAt": "2026-08-20T10:30:00Z",
+      "recordedAt": "2026-08-20T10:30:00Z"
+    },
+    "content": {
+      "format": "SECTIONS",
+      "title": "Comprehensive Oncology Survivorship & Endocrine Therapy Plan",
+      "rawText": "Multimodal management concluded (Surgery at TMH, Chemotherapy at Apollo, Radiotherapy at AIIMS). Patient is in complete clinical and radiological remission. Initiating adjuvant endocrine therapy: Tab Tamoxifen 20 mg once daily for 5-10 years with annual gynecological evaluation. Routine surveillance every 3 months.",
+      "sections": {
+        "clinicalSummary": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily.",
+        "impression": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily."
+      }
+    },
+    "summary": "Complete remission post multimodal therapy across TMH/Apollo/AIIMS. Initiated Tamoxifen 20mg daily."
+  }
+]

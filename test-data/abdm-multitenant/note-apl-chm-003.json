@@ -1,0 +1,34 @@
+{
+  "noteId": "NOTE-APL-CHM-003",
+  "tenantId": "APOLLO-BLR",
+  "patientId": "PAT-ABDM-001",
+  "encounterId": "ENC--CHM-003",
+  "sourceSystem": "APOLLO-MEDSYS",
+  "facilityId": "FAC-APL-DAYCARE",
+  "noteType": "MEDICAL_ONCOLOGY_PROGRESS",
+  "author": {
+    "clinicianId": "DOC-APL-7201",
+    "name": "Dr. Sarah Jenkins, MD, DM",
+    "department": "Medical Oncology"
+  },
+  "demographics": {
+    "age": 52,
+    "gender": "F",
+    "abhaId": "14-8765-4321-9876",
+    "city": "Bengaluru"
+  },
+  "timestamps": {
+    "authoredAt": "2026-05-10T11:00:00Z",
+    "recordedAt": "2026-05-10T11:00:00Z"
+  },
+  "content": {
+    "format": "SECTIONS",
+    "title": "Adjuvant Chemotherapy: AC-T Regimen Cycle 3",
+    "rawText": "Patient presented for Cycle 3 of AC chemotherapy (Doxorubicin 60 mg/m2 + Cyclophosphamide 600 mg/m2). Performance status ECOG 1. Mild nausea controlled with Aprepitant. No mucositis, neuropathy, or chest discomfort. Chemotherapy infused without acute hypersensitivity.",
+    "sections": {
+      "clinicalSummary": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1.",
+      "impression": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1."
+    }
+  },
+  "summary": "Completed Cycle 3 AC Chemotherapy for breast carcinoma. Good tolerance, ECOG 1."
+}
