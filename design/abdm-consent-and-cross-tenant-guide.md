@@ -8,9 +8,9 @@ This guide documents the architecture, policy rules, automated test cases, test 
 
 ### The Multi-Hospital Cancer Journey
 In Indian oncology care, a cancer patient frequently visits multiple independent hospitals for different modalities of care:
-1. **Hospital A (e.g. Tata Memorial Hospital, Mumbai - `TMH-MUMBAI`)**: Initial presentation, biopsy, oncopathology, and primary surgery (e.g. Modified Radical Mastectomy).
-2. **Hospital B (e.g. Apollo Hospitals, Bengaluru - `APOLLO-BLR`)**: Adjuvant chemotherapy (e.g. AC-T regimen) and frequent hematology lab monitoring closer to home.
-3. **Hospital C (e.g. AIIMS, New Delhi - `AIIMS-DEL`)**: Specialized radiation oncology (e.g. 3D-CRT / IMRT) and long-term survivorship care planning.
+1. **Hospital A (Regional Cancer Centre, Mumbai - `HOSP-MUMBAI`)**: Initial presentation, biopsy, oncopathology, and primary surgery (e.g. Modified Radical Mastectomy).
+2. **Hospital B (Specialty Oncology Daycare, Bengaluru - `HOSP-BLR`)**: Adjuvant chemotherapy (e.g. AC-T regimen) and frequent hematology lab monitoring closer to home.
+3. **Hospital C (Apex Radiotherapy Institute, New Delhi - `HOSP-DEL`)**: Specialized radiation oncology (e.g. 3D-CRT / IMRT) and long-term survivorship care planning.
 
 Each hospital operates as an independent tenant with strict data isolation.
 
@@ -27,10 +27,10 @@ Under India's **Ayushman Bharat Digital Mission (ABDM)**:
 
 | Request Context | Headers Passed | Resolved Tenant | Returned Data & Clinical Behavior |
 | :--- | :--- | :--- | :--- |
-| **Default Local Search** | `X-Tenant-Id: TMH-MUMBAI` | `TMH-MUMBAI` | **Strict Tenant Isolation**: Only notes authored by `TMH-MUMBAI` are returned (2 notes). Even if remote records exist with valid or expired consents, they are strictly omitted. |
-| **Remote Hospital (LIVE Consent)** | `X-Tenant-Id: APOLLO-BLR`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO` | `APOLLO-BLR` | **Authorized**: Notes authored by Apollo Hospitals are displayed (`2 notes`). |
-| **Remote Hospital (EXPIRED Consent)** | `X-Tenant-Id: AIIMS-DEL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-8802-AIIMS` | `AIIMS-DEL` | **Access Restricted**: Prohibited by ABDM policy. UI displays an explicit warning card detailing expiry timestamp and blocked status; 0 notes are displayed. |
-| **Federated All-Hospital View** | `X-Tenant-Id: ALL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO` | `ALL` | **Federated with Exclusion**: Aggregates records across authorized facilities (`TMH-MUMBAI` + `APOLLO-BLR` = 4 notes). Excludes AIIMS notes and displays an ABDM notification warning banner. |
+| **Default Local Search** | `X-Tenant-Id: HOSP-MUMBAI` | `HOSP-MUMBAI` | **Strict Tenant Isolation**: Only notes authored by `HOSP-MUMBAI` are returned (2 notes). Even if remote records exist with valid or expired consents, they are strictly omitted. |
+| **Remote Hospital (LIVE Consent)** | `X-Tenant-Id: HOSP-BLR`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR` | `HOSP-BLR` | **Authorized**: Notes authored by Hospital B are displayed (`2 notes`). |
+| **Remote Hospital (EXPIRED Consent)** | `X-Tenant-Id: HOSP-DEL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-8802-DEL` | `HOSP-DEL` | **Access Restricted**: Prohibited by ABDM policy. UI displays an explicit warning card detailing expiry timestamp and blocked status; 0 notes are displayed. |
+| **Federated All-Hospital View** | `X-Tenant-Id: ALL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR` | `ALL` | **Federated with Exclusion**: Aggregates records across authorized facilities (`HOSP-MUMBAI` + `HOSP-BLR` = 4 notes). Excludes Hospital C notes and displays an ABDM notification warning banner. |
 | **Direct ABHA ID Search** | `GET /api/v1/patients/14-8765-4321-9876/notes` | `ALL` | Resolves records matching raw ABHA ID or masked token `[PHI:ABHA:98527e]`. |
 
 ---
@@ -42,13 +42,13 @@ flowchart TD
     subgraph ABDMGateway["ABDM National Ecosystem"]
         REQ["<b>1. Consent Request Init</b><br/>HIU dispatches request to ABDM<br/><i>POST /v0.5/consent-requests/init</i>"]
         PHR["<b>2. Patient Consent Approval</b><br/>Patient approves on ABHA PHR App<br/>Digital Signature generated"]
-        CM["<b>3. Consent Manager Mints Artefact</b><br/>Digitally signed JSON/XML Artefact<br/><i>CONSENT-ABDM-9901-APOLLO</i>"]
+        CM["<b>3. Consent Manager Mints Artefact</b><br/>Digitally signed JSON/XML Artefact<br/><i>CONSENT-ABDM-9901-BLR</i>"]
         REQ --> PHR --> CM
     end
 
     subgraph ConsentDelivery["Consent Delivery Channels to Notes Aggregator"]
         WH["<b>Channel A: Asynchronous Webhook</b><br/>ABDM Gateway pushes notify callback:<br/><i>POST /api/v1/abdm/consent/notify</i><br/>Aggregator fetches & caches signed artefact"]
-        HDR["<b>Channel B: Runtime HTTP / JWT Presentation</b><br/>Client EMR passes header on query:<br/><i>X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO</i><br/>(or embedded in OAuth 2.0 JWT claim)"]
+        HDR["<b>Channel B: Runtime HTTP / JWT Presentation</b><br/>Client EMR passes header on query:<br/><i>X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR</i><br/>(or embedded in OAuth 2.0 JWT claim)"]
     end
 
     subgraph NotesAggregator["Notes Aggregator Core Engine"]
@@ -81,18 +81,18 @@ flowchart TD
 
 ### Detailed Mechanism Breakdown:
 1. **Out-of-Band Consent Request (ABDM M2/M3)**:
-   - When a clinician at `TMH-MUMBAI` needs access to notes from `APOLLO-BLR`, the hospital HIU calls the ABDM Gateway (`POST /v0.5/consent-requests/init`).
+   - When a clinician at `HOSP-MUMBAI` needs access to notes from `HOSP-BLR`, the hospital HIU calls the ABDM Gateway (`POST /v0.5/consent-requests/init`).
    - The patient receives a push notification on their **ABHA mobile app** and signs the request.
-   - The ABDM Consent Manager mints a signed artefact (`CONSENT-ABDM-9901-APOLLO`).
+   - The ABDM Consent Manager mints a signed artefact (`CONSENT-ABDM-9901-BLR`).
 
 2. **Delivery Channel A — Asynchronous ABDM Webhook Ingestion**:
    - ABDM Gateway sends `POST /v0.5/consents/hiu/notify` to the hospital's registered webhook callback.
-   - Notes Aggregator calls `POST /v0.5/consents/fetch`, downloads the signed artefact JSON, and caches it in **Amazon DynamoDB** (`abdm-consent-registry` table) with key `14-8765-4321-9876#APOLLO-BLR`.
+   - Notes Aggregator calls `POST /v0.5/consents/fetch`, downloads the signed artefact JSON, and caches it in **Amazon DynamoDB** (`abdm-consent-registry` table) with key `14-8765-4321-9876#HOSP-BLR`.
 
 3. **Delivery Channel B — Runtime Presentation (Headers & JWT Claims)**:
    - When querying notes via `GET /api/v1/patients/{patientId}/notes`, the client passes:
-     - `X-Tenant-Id: APOLLO-BLR` (or `ALL`)
-     - `X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO`
+     - `X-Tenant-Id: HOSP-BLR` (or `ALL`)
+     - `X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR`
    - In SMART on FHIR deployments, this is packaged inside the signed JWT Access Token claim (`abdm_consent_id`).
 
 4. **Runtime Verification**:
@@ -100,7 +100,7 @@ flowchart TD
      - Confirms ABDM digital signature.
      - Confirms `hip.id == requestedTenantId`.
      - Confirms `validFrom <= now() <= validTo`.
-   - If **LIVE**: Query executes against OpenSearch for `tenantId == APOLLO-BLR`.
+   - If **LIVE**: Query executes against OpenSearch for `tenantId == HOSP-BLR`.
    - If **EXPIRED**: Access is blocked, 0 notes are returned, and a renewal prompt is provided.
 
 ---
@@ -111,7 +111,7 @@ For visual modeling of this process, refer to the Draw.io diagram in the reposit
 👉 **[`design/architecture-and-dataflow.drawio`](file:///Users/dhananjaypatkar/work/ncg/source/notes_aggregator/design/architecture-and-dataflow.drawio)**
 
 - **Tab 3: ABDM Consent & Federated Process Flow**:
-  - Details the sequence from Clinician Login at `TMH-MUMBAI`, local patient search scoping, ABHA auto-population, tenant dropdown selection, consent evaluation, and federated warning notifications.
+  - Details the sequence from Clinician Login at `HOSP-MUMBAI`, local patient search scoping, ABHA auto-population, tenant dropdown selection, consent evaluation, and federated warning notifications.
 - **Tab 1 & 2**:
   - Illustrates the technical architecture (Hybrid AWS Serverless + EC2 OpenSearch 2.15) and data flow lifecycle (dual-write, warm index, lazy S3 rehydration, and eviction).
 
@@ -124,8 +124,8 @@ The codebase includes automated unit and integration tests covering the ABDM con
 ### Test Suites
 
 1. **`NotesQueryHandlerTest.java`** (`source/notes-query-handler`):
-   - `shouldEnforceTenantIsolationWhenSpecificTenantIsRequestedEvenWithConsent`: Verifies that requesting `X-Tenant-Id: TMH-MUMBAI` strictly returns notes belonging to TMH, preserving tenant isolation.
-   - `shouldEnableCrossTenantFederationWhenConsentArtefactIsProvided`: Verifies that passing `X-Consent-Artefact-Id` with `X-Tenant-Id: ALL` queries OpenSearch across all tenants and returns notes with disparate `tenantId`s (`TMH-MUMBAI`, `APOLLO-BLR`, `AIIMS-DEL`).
+   - `shouldEnforceTenantIsolationWhenSpecificTenantIsRequestedEvenWithConsent`: Verifies that requesting `X-Tenant-Id: HOSP-MUMBAI` strictly returns notes belonging to Hospital A, preserving tenant isolation.
+   - `shouldEnableCrossTenantFederationWhenConsentArtefactIsProvided`: Verifies that passing `X-Consent-Artefact-Id` with `X-Tenant-Id: ALL` queries OpenSearch across all tenants and returns notes with disparate `tenantId`s (`HOSP-MUMBAI`, `HOSP-BLR`, `HOSP-DEL`).
    - `shouldEnforceTenantIsolationWhenConsentArtefactIsAbsent`: Verifies that without a consent artefact or explicit cross-tenant intent, queries are strictly confined to the local tenant.
    - `shouldEnableCrossTenantFederationWhenQueryParamCrossTenantIsTrue`: Verifies `?crossTenant=true` parameter.
    - `shouldSupportAbhaIdAsPatientIdentifierInPathWithConsent`: Verifies querying directly by ABHA ID `14-8765-4321-9876`.

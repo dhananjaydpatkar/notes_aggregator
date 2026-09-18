@@ -6,9 +6,9 @@
 
 ### 1.1 The Distributed Cancer Care Journey
 Cancer care is inherently complex, prolonged, and multi-modal. Unlike acute episodic illnesses, a patient's oncological journey rarely occurs within a single medical center. Patients routinely navigate across multiple independent healthcare institutions throughout their treatment:
-* **Tertiary Surgical Center (e.g., Tata Memorial Hospital, Mumbai)**: Initial clinical presentation, diagnostic biopsies, oncopathology staging, genomic biomarker profiling, and primary surgical resection (e.g., Modified Radical Mastectomy).
-* **Regional Daycare / Chemotherapy Center (e.g., Apollo Hospitals, Bengaluru)**: Cycles of adjuvant systemic therapy (chemotherapy regimens, targeted therapy, immunotherapy) and frequent hematology/toxicology monitoring closer to the patient's home.
-* **Specialized Radiation Oncology Institute (e.g., AIIMS, New Delhi)**: High-precision radiotherapy planning (3D-CRT, IMRT, stereotactic radiosurgery), brachytherapy, and long-term survivorship care planning.
+* **Tertiary Surgical Center (e.g., Regional Cancer Centre, Mumbai)**: Initial clinical presentation, diagnostic biopsies, oncopathology staging, genomic biomarker profiling, and primary surgical resection (e.g., Modified Radical Mastectomy).
+* **Regional Daycare / Chemotherapy Center (e.g., Specialty Oncology Daycare, Bengaluru)**: Cycles of adjuvant systemic therapy (chemotherapy regimens, targeted therapy, immunotherapy) and frequent hematology/toxicology monitoring closer to the patient's home.
+* **Specialized Radiation Oncology Institute (e.g., Apex Radiotherapy Institute, New Delhi)**: High-precision radiotherapy planning (3D-CRT, IMRT, stereotactic radiosurgery), brachytherapy, and long-term survivorship care planning.
 
 ### 1.2 The Clinical Data Sharing Dilemma
 While longitudinal continuity of care is vital for patient safety and survival, sharing clinical information across independent healthcare institutions presents severe operational and technical hurdles:
@@ -44,9 +44,9 @@ flowchart LR
     %% Source Applications
     subgraph Sources["Source Applications (Hospital Tenants)"]
         direction TB
-        S1["TMH Mumbai (Surgery/Path)"]
-        S2["Apollo Bengaluru (Med Onc)"]
-        S3["AIIMS New Delhi (Rad Onc)"]
+        S1["Hospital A - Mumbai (Surgery/Path)"]
+        S2["Hospital B - Bengaluru (Med Onc)"]
+        S3["Hospital C - New Delhi (Rad Onc)"]
         S4["Hospital EMRs / OT"]
     end
 
@@ -215,9 +215,9 @@ sequenceDiagram
     rect rgb(254, 242, 242)
     Note over Clinician,S3: Phase 1: On-Demand Warm Index Eviction
     Clinician->>SPA: Clicks "🗑 Evict from Index"
-    SPA->>APIGW: DELETE /api/v1/patients/PAT-ABDM-001/index<br/>Header: X-Tenant-Id: TMH-MUMBAI
+    SPA->>APIGW: DELETE /api/v1/patients/PAT-ABDM-001/index<br/>Header: X-Tenant-Id: HOSP-MUMBAI
     APIGW->>Evict: Dispatches request to NotesIndexEvictionHandler
-    Evict->>OS: POST /clinical-notes-v1/_delete_by_query<br/>Filter: { tenantId: "TMH-MUMBAI", patientId: "PAT-ABDM-001" }
+    Evict->>OS: POST /clinical-notes-v1/_delete_by_query<br/>Filter: { tenantId: "HOSP-MUMBAI", patientId: "PAT-ABDM-001" }
     OS-->>Evict: { deleted: 2 } (RAM & translog disk space freed)
     Note over Evict,S3: Durable S3 records remain 100% untouched & immutable!
     Evict-->>APIGW: 200 OK ({ deletedFromIndex: 2, dataRetainedInS3: true })
@@ -228,12 +228,12 @@ sequenceDiagram
     rect rgb(240, 249, 255)
     Note over Clinician,S3: Phase 2: Transparent Read-Through Lazy S3 Rehydration
     Clinician->>SPA: Later: Searches for patient "PAT-ABDM-001"
-    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Header: X-Tenant-Id: TMH-MUMBAI
+    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Header: X-Tenant-Id: HOSP-MUMBAI
     APIGW->>Query: Dispatches request to NotesQueryHandler
-    Query->>OS: Query OpenSearch: { tenantId: "TMH-MUMBAI", patientId: "PAT-ABDM-001" }
+    Query->>OS: Query OpenSearch: { tenantId: "HOSP-MUMBAI", patientId: "PAT-ABDM-001" }
     OS-->>Query: 0 hits (Cache Miss / Post-Eviction)
-    Query->>S3: fetchAllByPatient("TMH-MUMBAI", "PAT-ABDM-001")
-    S3-->>Query: Returns 2 raw notes from s3://clinical-notes-store/v1/tenants/TMH-MUMBAI/...
+    Query->>S3: fetchAllByPatient("HOSP-MUMBAI", "PAT-ABDM-001")
+    S3-->>Query: Returns 2 raw notes from s3://clinical-notes-store/v1/tenants/HOSP-MUMBAI/...
     Query->>OS: bulkIndex(s3Notes) (Lazy Rehydration)
     OS-->>Query: OpenSearch warm index rehydrated!
     Query-->>APIGW: 200 OK (2 notes, servedFrom: "S3_REHYDRATED")
@@ -246,8 +246,8 @@ sequenceDiagram
 * **Role**: Enforces India's ABDM digital consent guidelines and cross-hospital access policies.
 * **Governance Model**:
   1. **Strict Local Tenant Isolation by Default**:
-     - When a clinician searches by **Patient ID** (e.g., `PAT-ABDM-001`), the query is strictly bound to the clinician's home hospital tenant (e.g., `TMH-MUMBAI`).
-     - Notes from other hospitals (`APOLLO-BLR`, `AIIMS-DEL`) are **never** returned, even if the patient has records there.
+     - When a clinician searches by **Patient ID** (e.g., `PAT-ABDM-001`), the query is strictly bound to the clinician's home hospital tenant (e.g., `HOSP-MUMBAI`).
+     - Notes from other hospitals (`HOSP-BLR`, `HOSP-DEL`) are **never** returned, even if the patient has records there.
   2. **Automated ABHA Resolution**:
      - Local search resolves and auto-populates the patient's national 14-digit ABHA ID into the ABDM lookup box.
   3. **Tenant-Specific Consent Evaluation**:
@@ -265,7 +265,7 @@ The diagram below reflects the **exact deployed implementation flow** between th
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Clinician as Clinician (TMH-MUMBAI)
+    actor Clinician as Clinician (HOSP-MUMBAI)
     participant SPA as Clinical Workstation SPA (app.js)
     participant APIGW as Amazon API Gateway HTTP API
     participant Lambda as notes-query-handler (Java 21)
@@ -277,44 +277,44 @@ sequenceDiagram
     Note over Clinician,S3: Scenario A: Local Patient ID Search (Strict Scoping to Home Facility)
     Clinician->>SPA: Enters Patient ID "PAT-ABDM-001" & clicks Search
     SPA->>SPA: Directory lookup: resolves ABHA "14-8765-4321-9876", auto-populates ABHA box
-    SPA->>SPA: Scopes target facility strictly to current hospital: "TMH-MUMBAI"
-    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Header: X-Tenant-Id: TMH-MUMBAI
+    SPA->>SPA: Scopes target facility strictly to current hospital: "HOSP-MUMBAI"
+    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Header: X-Tenant-Id: HOSP-MUMBAI
     APIGW->>Lambda: Dispatches request to notes-query-handler
-    Lambda->>OS: Query OpenSearch: { tenantId: "TMH-MUMBAI", patientId: "PAT-ABDM-001" }
+    Lambda->>OS: Query OpenSearch: { tenantId: "HOSP-MUMBAI", patientId: "PAT-ABDM-001" }
     alt Warm Index Hit (Data in OpenSearch)
         OS-->>Lambda: Returns 2 notes (Operative Note, Biopsy) [servedFrom: INDEX]
     else Cache Miss / Post-Eviction (0 notes in OpenSearch)
         OS-->>Lambda: 0 hits
-        Lambda->>S3: fetchAllByPatient("TMH-MUMBAI", "PAT-ABDM-001")
-        S3-->>Lambda: Returns raw notes from s3://clinical-notes-store/v1/tenants/TMH-MUMBAI/...
+        Lambda->>S3: fetchAllByPatient("HOSP-MUMBAI", "PAT-ABDM-001")
+        S3-->>Lambda: Returns raw notes from s3://clinical-notes-store/v1/tenants/HOSP-MUMBAI/...
         Lambda->>OS: bulkIndex(s3Notes) (Lazy Rehydration)
         OS-->>Lambda: Index rehydrated
         Lambda-->>Lambda: Re-queries OpenSearch [servedFrom: S3_REHYDRATED]
     end
-    Lambda-->>APIGW: 200 OK (2 TMH notes)
+    Lambda-->>APIGW: 200 OK (2 notes)
     APIGW-->>SPA: 200 OK
-    SPA-->>Clinician: Renders 2 TMH notes. Apollo & AIIMS records strictly isolated!
+    SPA-->>Clinician: Renders 2 Hospital A notes. Remote hospital records strictly isolated!
     end
 
     %% Scenario B: Remote Hospital Selection with LIVE Consent
     rect rgb(240, 253, 244)
-    Note over Clinician,S3: Scenario B: Remote Hospital Selection with LIVE Consent (APOLLO-BLR)
-    Clinician->>SPA: Selects "APOLLO-BLR" from Hospital Record dropdown
-    SPA->>SPA: Checks consent status: CONSENT-ABDM-9901-APOLLO is LIVE (Valid till 31 Dec 2026)
-    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Headers: X-Tenant-Id: APOLLO-BLR, X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO
+    Note over Clinician,S3: Scenario B: Remote Hospital Selection with LIVE Consent (HOSP-BLR)
+    Clinician->>SPA: Selects "HOSP-BLR" from Hospital Record dropdown
+    SPA->>SPA: Checks consent status: CONSENT-ABDM-9901-BLR is LIVE (Valid till 31 Dec 2026)
+    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes?tenantId=HOSP-BLR<br/>Header: X-Tenant-Id: HOSP-BLR
     APIGW->>Lambda: Dispatches query with remote tenant
-    Lambda->>OS: Query OpenSearch: { tenantId: "APOLLO-BLR", patientId: "PAT-ABDM-001" }
+    Lambda->>OS: Query OpenSearch: { tenantId: "HOSP-BLR", patientId: "PAT-ABDM-001" }
     OS-->>Lambda: Returns 2 notes (Chemo AC-T Cycle 3, CBC Lab Report) [servedFrom: INDEX]
     Lambda-->>APIGW: 200 OK
     APIGW-->>SPA: 200 OK
-    SPA-->>Clinician: Displays Apollo notes with green [LIVE Consent] badge
+    SPA-->>Clinician: Displays Hospital B notes with green [LIVE Consent] badge
     end
 
     %% Scenario C: Remote Hospital Selection with EXPIRED Consent
     rect rgb(254, 242, 242)
-    Note over Clinician,S3: Scenario C: Remote Hospital Selection with EXPIRED Consent (AIIMS-DEL)
-    Clinician->>SPA: Selects "AIIMS-DEL" from Hospital Record dropdown
-    SPA->>SPA: Inspects consent status: CONSENT-ABDM-8802-AIIMS is EXPIRED (Expired 31 Aug 2026)
+    Note over Clinician,S3: Scenario C: Remote Hospital Selection with EXPIRED Consent (HOSP-DEL)
+    Clinician->>SPA: Selects "HOSP-DEL" from Hospital Record dropdown
+    SPA->>SPA: Inspects consent status: CONSENT-ABDM-8802-DEL is EXPIRED (Expired 31 Aug 2026)
     Note over SPA: ABDM HIU Policy Enforcement: Viewing notes without active consent is prohibited
     SPA-->>SPA: Blocks query execution! Zero backend calls dispatched
     SPA-->>Clinician: Hides timeline, displays "Access Restricted: ABDM Consent Expired" Warning Card with renewal action
@@ -324,16 +324,16 @@ sequenceDiagram
     rect rgb(254, 243, 199)
     Note over Clinician,S3: Scenario D: Federated ALL View (Aggregated Timeline with Notice)
     Clinician->>SPA: Selects "ALL — All ABDM Facilities (Federated View)"
-    SPA->>SPA: Scans tenant consents: AIIMS is EXPIRED; TMH & Apollo are LIVE
-    SPA->>SPA: Displays yellow Warning Banner: "Records from AIIMS-DEL excluded due to expired consent"
-    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes<br/>Headers: X-Tenant-Id: ALL, X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO
+    SPA->>SPA: Scans tenant consents: HOSP-DEL is EXPIRED, HOSP-MUMBAI & HOSP-BLR are LIVE
+    SPA->>SPA: Displays yellow Warning Banner: "Records from HOSP-DEL excluded due to expired consent"
+    SPA->>APIGW: GET /api/v1/patients/PAT-ABDM-001/notes?tenantId=ALL<br/>Header: X-Tenant-Id: ALL
     APIGW->>Lambda: Dispatches federated query
     Lambda->>OS: Query OpenSearch across all tenants for PAT-ABDM-001
     OS-->>Lambda: Returns notes across participating tenants
     Lambda-->>APIGW: 200 OK
     APIGW-->>SPA: 200 OK
-    SPA->>SPA: Excludes unauthorized expired tenant records (AIIMS-DEL)
-    SPA-->>Clinician: Renders 4 permitted notes (2 TMH + 2 Apollo) in chronological timeline
+    SPA->>SPA: Excludes unauthorized expired tenant records (HOSP-DEL)
+    SPA-->>Clinician: Renders 4 permitted notes (2 Hospital A + 2 Hospital B) in chronological timeline
     end
 ```
 
@@ -350,10 +350,10 @@ sequenceDiagram
 
 | Request Context | Headers & Parameters Passed | Resolved Tenant | Access Decision & Returned Data |
 | :--- | :--- | :--- | :--- |
-| **Default Local Search** | `X-Tenant-Id: TMH-MUMBAI` | `TMH-MUMBAI` | **Strict Isolation**: Only notes authored by `TMH-MUMBAI` are returned. All remote records are omitted. |
-| **Remote Hospital (LIVE Consent)** | `X-Tenant-Id: APOLLO-BLR`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO` | `APOLLO-BLR` | **Authorized**: Notes authored by Apollo Hospitals are displayed (`2 notes`). |
-| **Remote Hospital (EXPIRED Consent)** | `X-Tenant-Id: AIIMS-DEL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-8802-AIIMS` | `AIIMS-DEL` | **Blocked**: 0 notes returned. Warning card displayed in UI with ABDM policy compliance notice and renewal action. |
-| **Federated All-Hospital View** | `X-Tenant-Id: ALL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-APOLLO` | `ALL` | **Federated with Exclusion**: Aggregates `TMH-MUMBAI` and `APOLLO-BLR`. AIIMS records are excluded; notification banner displayed. |
+| **Default Local Search** | `X-Tenant-Id: HOSP-MUMBAI` | `HOSP-MUMBAI` | **Strict Isolation**: Only notes authored by `HOSP-MUMBAI` are returned. All remote records are omitted. |
+| **Remote Hospital (LIVE Consent)** | `X-Tenant-Id: HOSP-BLR`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR` | `HOSP-BLR` | **Authorized**: Notes authored by Hospital B are displayed (`2 notes`). |
+| **Remote Hospital (EXPIRED Consent)** | `X-Tenant-Id: HOSP-DEL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-8802-DEL` | `HOSP-DEL` | **Blocked**: 0 notes returned. Warning card displayed in UI with ABDM policy compliance notice and renewal action. |
+| **Federated All-Hospital View** | `X-Tenant-Id: ALL`<br>`X-Consent-Artefact-Id: CONSENT-ABDM-9901-BLR` | `ALL` | **Federated with Exclusion**: Aggregates `HOSP-MUMBAI` and `HOSP-BLR`. Hospital C records are excluded; notification banner displayed. |
 | **Direct ABHA ID Search** | `GET /api/v1/patients/14-8765-4321-9876/notes` | `ALL` / specified | Resolves cross-tenant notes matching either raw ABHA ID or masked token `[PHI:ABHA:98527e]`. |
 
 ---
@@ -370,9 +370,9 @@ sequenceDiagram
 #### Single Note Payload:
 ```json
 {
-  "tenantId": "TMH-MUMBAI",
+  "tenantId": "HOSP-MUMBAI",
   "sourceSystem": "MOIS",
-  "facilityId": "TMH-ACTREC-01",
+  "facilityId": "FAC-MUM-CTR-01",
   "patientId": "PAT-ABDM-001",
   "encounterId": "ENC-45129",
   "noteType": "SURGICAL_OPERATIVE",
@@ -409,11 +409,11 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
 ```json
 {
   "status": "SUCCESS",
-  "noteId": "NOTE-TMH-BRCA-001",
-  "tenantId": "TMH-MUMBAI",
+  "noteId": "NOTE-MUM-BRCA-001",
+  "tenantId": "HOSP-MUMBAI",
   "patientId": "PAT-ABDM-001",
   "indexedAt": "2026-09-17T10:32:15.184Z",
-  "storageUri": "s3://clinical-notes-store/v1/tenants/TMH-MUMBAI/patients/PAT-ABDM-001/2026/09/NOTE-TMH-BRCA-001.json"
+  "storageUri": "s3://clinical-notes-store/v1/tenants/HOSP-MUMBAI/patients/PAT-ABDM-001/2026/09/NOTE-MUM-BRCA-001.json"
 }
 ```
 
@@ -425,9 +425,9 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
   "totalIngested": 3,
   "patientId": "PAT-ABDM-001",
   "noteIds": [
-    "NOTE-TMH-BRCA-001",
-    "NOTE-APOLLO-CHEMO-001",
-    "NOTE-AIIMS-RAD-001"
+    "NOTE-MUM-BRCA-001",
+    "NOTE-BLR-CHEMO-001",
+    "NOTE-DEL-RAD-001"
   ]
 }
 ```
@@ -437,7 +437,7 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
 ### 5.2 Query API: Search & Retrieve Patient Notes
 * **Method & Path**: `GET /api/v1/patients/{patientId}/notes`
 * **Headers**:
-  * `X-Tenant-Id: <tenantId>` (`TMH-MUMBAI`, `APOLLO-BLR`, or `ALL`)
+  * `X-Tenant-Id: <tenantId>` (`HOSP-MUMBAI`, `HOSP-BLR`, or `ALL`)
   * `X-Consent-Artefact-Id: <consentId>` (Required for remote/cross-tenant queries)
 * **Query Parameters**:
   * `page`: 1-based page index (default: 1)
@@ -448,14 +448,14 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
 ```json
 {
   "patientId": "PAT-ABDM-001",
-  "tenantId": "TMH-MUMBAI",
+  "tenantId": "HOSP-MUMBAI",
   "totalNotes": 2,
   "page": 1,
   "limit": 20,
   "servedFrom": "INDEX",
   "notes": [
     {
-      "noteId": "NOTE-TMH-BRCA-001",
+      "noteId": "NOTE-MUM-BRCA-001",
       "noteType": "SURGICAL_OPERATIVE",
       "author": {
         "clinicianId": "DOC-7712",
@@ -465,10 +465,10 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
       "authoredAt": "2026-08-18T10:30:00Z",
       "recordedAt": "2026-08-18T10:32:15Z",
       "sourceSystem": "MOIS",
-      "facilityId": "TMH-ACTREC-01",
+      "facilityId": "FAC-MUM-CTR-01",
       "summary": "Modified Radical Mastectomy Operative Note",
-      "storageUri": "/api/v1/notes/NOTE-TMH-BRCA-001/document",
-      "tenantId": "TMH-MUMBAI"
+      "storageUri": "/api/v1/notes/NOTE-MUM-BRCA-001/document",
+      "tenantId": "HOSP-MUMBAI"
     }
   ]
 }
@@ -485,7 +485,7 @@ Accepts `[ { ...note1 }, { ...note2 } ]` in a single POST request.
 ```json
 {
   "patientId": "PAT-ABDM-001",
-  "tenantId": "TMH-MUMBAI",
+  "tenantId": "HOSP-MUMBAI",
   "deletedFromIndex": 2,
   "dataRetainedInS3": true,
   "message": "Patient data evicted from warm index. Data intact in S3. Next read will rehydrate automatically."
@@ -530,21 +530,21 @@ The Clinical Workstation SPA (`http://13.202.49.76/`) implements a clear, 3-step
 
 1. **Step 1: Local Patient ID Lookup (Current Facility)**:
    - Clinician enters local patient ID (e.g. `PAT-ABDM-001`).
-   - Query is strictly scoped to the clinician's facility (`TMH-MUMBAI`).
+   - Query is strictly scoped to the clinician's facility (`HOSP-MUMBAI`).
    - Default search returns only local notes (e.g. 2 notes).
    - System automatically resolves and displays the patient's ABDM ABHA ID (`14-8765-4321-9876`).
 
 2. **Step 2: Hospital Record Selector & Tenant Consent**:
    - Clinician selects a specific hospital record from the dropdown.
    - Consent status card displays live/expired status and consent artefact ID.
-   - **Apollo Bengaluru (`APOLLO-BLR`)**: Consent is `LIVE` (`CONSENT-ABDM-9901-APOLLO`) → chemotherapy and lab notes load seamlessly with green badge.
-   - **AIIMS New Delhi (`AIIMS-DEL`)**: Consent is `EXPIRED` (`CONSENT-ABDM-8802-AIIMS`) → Timeline is replaced with an explicit ABDM warning card; 0 notes are displayed; clinician is prompted to initiate consent renewal via the patient's ABDM PHR app.
+   - **Hospital B - Bengaluru (`HOSP-BLR`)**: Consent is `LIVE` (`CONSENT-ABDM-9901-BLR`) → chemotherapy and lab notes load seamlessly with green badge.
+   - **Hospital C - New Delhi (`HOSP-DEL`)**: Consent is `EXPIRED` (`CONSENT-ABDM-8802-DEL`) → Timeline is replaced with an explicit ABDM warning card; 0 notes are displayed; clinician is prompted to initiate consent renewal via the patient's ABDM PHR app.
 
 3. **Step 3: All Hospitals (Federated View)**:
    - Clinician selects `ALL Hospitals (Federated Timeline)`.
-   - Notes from authorized facilities (`TMH-MUMBAI` + `APOLLO-BLR`) are chronologically merged.
+   - Notes from authorized facilities (`HOSP-MUMBAI` + `HOSP-BLR`) are chronologically merged.
    - A prominent warning notification banner appears at the top:
-     > *"ABDM Notice: Certain Hospital Records Excluded Due to Expired Consent. Records from AIIMS-DEL (AIIMS, New Delhi) are excluded due to expired consent artefact CONSENT-ABDM-8802-AIIMS."*
+     > *"ABDM Notice: Certain Hospital Records Excluded Due to Expired Consent. Records from HOSP-DEL (Hospital C, New Delhi) are excluded due to expired consent artefact CONSENT-ABDM-8802-DEL."*
 
 4. **Index Eviction Demonstration**:
    - Clinician clicks `🗑 Evict from Index`.

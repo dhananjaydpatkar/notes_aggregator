@@ -32,5 +32,5 @@
 
 | Patient ID | Patient Name | ABHA ID | Age / Sex | Oncology Diagnosis | Hospitals / Tenants Involved | Total Notes | Surgery | Chemo | Radio | Lab | Path | Plan | Imaging |
 | :--- | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `PAT-ABDM-001` | Anita Deshmukh | `14-8765-4321-9876` | 52 / F | Invasive Ductal Breast Ca | `TMH-MUMBAI`, `APOLLO-BLR`, `AIIMS-DEL` | 6 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
-| `PAT-ABDM-002` | Vikram Malhotra | `14-1234-5678-9012` | 64 / M | Non-Small Cell Lung Ca | `MAX-DELHI`, `FORTIS-NCR` | 4 | 1 | 1 | 0 | 0 | 1 | 0 | 1 |
+| `PAT-ABDM-001` | Anita Deshmukh | `14-8765-4321-9876` | 52 / F | Invasive Ductal Breast Ca | `HOSP-MUMBAI`, `HOSP-BLR`, `HOSP-DEL` | 6 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
+| `PAT-ABDM-002` | Vikram Malhotra | `14-1234-5678-9012` | 64 / M | Non-Small Cell Lung Ca | `HOSP-DELHI`, `HOSP-NCR` | 4 | 1 | 1 | 0 | 0 | 1 | 0 | 1 |
